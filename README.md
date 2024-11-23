@@ -51,7 +51,7 @@ $ npm install
 $ npx hardhat test
 ```
 
-<b>Additionally, this repo includes a script that uses hardhat `ignition modules` to deploy the token and the auction house contracts, allowing for direct interaction with the contracts. It is configured for the hardhat network. To deploy, run: <b/>
+<b>Additionally, this repo includes a script that uses hardhat `ignition modules` to deploy the token and the auction house contracts, allowing for direct interaction with the contracts. It is configured for the hardhat network. To deploy, run: </b>
 
 ```
 $ npx hardhat run scripts/deploy.ts --network hardhat
