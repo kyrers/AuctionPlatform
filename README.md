@@ -29,11 +29,12 @@ The assignment was mostly followed, but several important decisions were made:
 Aside from the auction house logic, the code itself could be improved. Here are a few examples:
 
 1. Bonus features such as Dynamic Escrow and Upgradeable Contracts were not implemented, so these would be major improvements;
-2. Although the test suite is extensive, there are always more tests to make :);
-3. Most likely, tests could be better if using hardhat `ignition`;
-4. Additionally, the tests could be split between different files (time didn't permit it :) );
-5. The above point applies to the contract itself;
-6. Gas optimizations;
+2. Actually auction an item, via NFT for example;
+3. Although the test suite is extensive, there are always more tests to make :);
+4. Most likely, tests could be better if using hardhat `ignition`;
+5. Additionally, the tests could be split between different files (time didn't permit it :) );
+6. The above point applies to the contract itself;
+7. Gas optimizations;
 
 ## How to run the test suite ##
 
