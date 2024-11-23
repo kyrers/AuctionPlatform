@@ -367,7 +367,7 @@ describe("### AuctionHouse Contract ###", function () {
       it("Should reject Bidder2 bid because it is lower than the minimum bid", async function () {
         const invalidBid = ethers.parseUnits("5", 18);
 
-        // Approve auctionHouseContract to spend 1000 tokens on behalf of bidder1
+        // Approve auctionHouseContract to spend 1000 tokens on behalf of bidder2
         await tokenContract
           .connect(bidder2)
           .approve(auctionHouseContract.target, ethers.parseUnits("10000", 18));
@@ -383,7 +383,7 @@ describe("### AuctionHouse Contract ###", function () {
       });
 
       it("Should reject Bidder2 bid because it is less than the current highest bid", async function () {
-        // Lower than the current highest of 12AHT
+        // Lower than the current highest bid of 12AHT
         const lowerBid = ethers.parseUnits("11", 18);
 
         await expect(
@@ -397,7 +397,6 @@ describe("### AuctionHouse Contract ###", function () {
       });
 
       it("Should keep Bidder1 as the leader and only transfer the difference as he is increasing his bid", async function () {
-        // Get the initial wallet balance
         const initialBalance = await tokenContract.balanceOf(bidder1.address);
         const topUpBid = ethers.parseUnits("14", 18);
         const difference = ethers.parseUnits("2", 18);
@@ -446,7 +445,6 @@ describe("### AuctionHouse Contract ###", function () {
         // Mine a new block to reflect the increased time
         await ethers.provider.send("evm_mine", []);
 
-        // Place a bid within the last 5 minutes
         const bidAmount = ethers.parseUnits("16", 18);
         await expect(
           auctionHouseContract
@@ -458,28 +456,24 @@ describe("### AuctionHouse Contract ###", function () {
           .to.emit(auctionHouseContract, "AuctionDeadlineExtended")
           .withArgs(FIRST_AUCTION_ID, firstAuctionDeadline + 300);
 
-        // Get the new deadline after the bid
         const newDeadline = (
           await auctionHouseContract.auctions(FIRST_AUCTION_ID)
         ).deadline;
 
-        // Check if the new deadline is exactly 5 minutes after the initial one
         expect(newDeadline).to.equal(firstAuctionDeadline + 300);
       });
 
       it("Should revert because the auction deadline has passed", async function () {
         await ethers.provider.send("evm_increaseTime", [2500]);
-
-        // Mine a new block to reflect the increased time
         await ethers.provider.send("evm_mine", []);
 
         // Place a valid bid after the deadline has passed
-        const invalidBid = ethers.parseUnits("17", 18);
+        const bidAmount = ethers.parseUnits("17", 18);
 
         await expect(
           auctionHouseContract
             .connect(bidder1)
-            .placeBid(FIRST_AUCTION_ID, invalidBid)
+            .placeBid(FIRST_AUCTION_ID, bidAmount)
         ).to.be.revertedWithCustomError(
           auctionHouseContract,
           "AuctionDeadlineHasPassed"
@@ -640,9 +634,8 @@ describe("### AuctionHouse Contract ###", function () {
 
       it("Should revert because it isn't the seller trying to resolve the auction", async function () {
         await ethers.provider.send("evm_increaseTime", [14400]);
-
-        // Mine a new block to reflect the increased time
         await ethers.provider.send("evm_mine", []);
+
         await expect(
           auctionHouseContract.connect(bidder2).resolveAuction(THIRD_AUCTION_ID)
         ).to.be.revertedWithCustomError(auctionHouseContract, "NotTheSeller");
@@ -745,8 +738,6 @@ describe("### AuctionHouse Contract ###", function () {
 
       it("Should revert because the it is not the highest bidder", async function () {
         await ethers.provider.send("evm_increaseTime", [28800]);
-
-        // Mine a new block to reflect the increased time
         await ethers.provider.send("evm_mine", []);
 
         await expect(
